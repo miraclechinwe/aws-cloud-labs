@@ -1,0 +1,42 @@
+# Lab 03: Working with AMI and EBS
+
+## Objective
+In this lab, I worked with EC2, AMIs and EBS to learn how to copy an EC2 setup to another AWS region and manage additional storage.
+
+## 1. Launch EC2 in N. Virginia
+I launched a Linux EC2 instance in the N. Virginia region (`us-east-1`).
+
+[Paste screenshot]
+
+## 2. Create an AMI
+I created an AMI from the instance. This gave me a reusable image of the EC2 setup.
+
+[Paste screenshot]
+
+## 3. Copy to Oregon
+I copied the AMI to the Oregon region (`us-west-2`) and used it to launch another instance with the same setup.
+
+[Paste screenshot]
+
+## 4. Add EBS Storage
+Back in N. Virginia, I created two EBS volumes and attached them to my EC2 instance as additional storage.
+
+[Paste screenshot]
+
+## 5. Remove One Volume
+I detached one of the additional EBS volumes and deleted it.
+
+[Paste screenshot]
+
+## 6. Increase the Storage
+I increased the size of the second EBS volume to practice modifying storage without creating a new volume.
+
+[Paste screenshot]
+
+## 7. Back Up the Volume
+Finally, I created a snapshot of the remaining EBS volume as a backup.
+
+[Paste screenshot]
+
+## What I Learned
+This lab helped me understand the difference between an AMI and EBS storage. I also practiced copying an EC2 setup between regions, adding and modifying storage, and creating an EBS backup.
