@@ -24,8 +24,7 @@ I created an Amazon Elastic File System (EFS) to provide shared storage for mult
 
 For this hands-on lab, I modified the security group associated with the EFS mount targets to allow connectivity during the initial configuration.
 
-![EFS Security Group](<img width="1599" height="716" alt="image" src="https://github.com/user-attachments/assets/e6177ead-1a2c-4277-a077-6c0f5ce8ede8" />
-)
+<img width="1599" height="716" alt="image" src="https://github.com/user-attachments/assets/e6177ead-1a2c-4277-a077-6c0f5ce8ede8" />
 
 ## 3. Launch Three EC2 Instances
 
@@ -35,16 +34,14 @@ I launched three EC2 instances using different Linux operating systems:
 - Ubuntu
 - Red Hat Enterprise Linux (RHEL)
 
-![EC2 Instances](<img width="1596" height="760" alt="image" src="https://github.com/user-attachments/assets/2b07e25f-8a18-464b-ac33-cf2d784deaa0" />
-)
+<img width="1596" height="760" alt="image" src="https://github.com/user-attachments/assets/2b07e25f-8a18-464b-ac33-cf2d784deaa0" />
 
 ## 3. Configure Three EC2 Instances security groups
 
 During the lab, I configured the security groups for the instances to enable the required network communication with Amazon EFS.
 
 For the first instance, I added an NFS rule to allow communication. For the other two instances, broader traffic rules were temporarily used for connectivity testing during the lab.
-![First EC2 Security Group](<img width="1599" height="581" alt="image" src="https://github.com/user-attachments/assets/351861fe-daac-4d0f-b1ee-9aba0253346e" />
-)
+<img width="1599" height="581" alt="image" src="https://github.com/user-attachments/assets/351861fe-daac-4d0f-b1ee-9aba0253346e" />
 
 > **Note:** The broad traffic rules were used only for this hands-on demonstration. In a production environment, access should be restricted to only the required ports and trusted sources.
 
