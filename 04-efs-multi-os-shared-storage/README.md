@@ -115,10 +115,9 @@ The command was then executed in the CLI of each EC2 instance to mount the EFS f
 
 Example:
 
-![EFS NFS Mount Command](<img width="1599" height="510" alt="image" src="https://github.com/user-attachments/assets/cb8c5146-5c0d-4710-b744-77eeb19ac244" />
-)
-![EFS NFS Mount Command](<img width="1476" height="520" alt="image" src="https://github.com/user-attachments/assets/6239dba7-9599-404b-8b20-d73fd66d9edb" />
-)
+<img width="1599" height="510" alt="image" src="https://github.com/user-attachments/assets/cb8c5146-5c0d-4710-b744-77eeb19ac244" />
+
+<img width="1476" height="520" alt="image" src="https://github.com/user-attachments/assets/6239dba7-9599-404b-8b20-d73fd66d9edb" />
 
 ## 8. Verify Shared Storage
 
@@ -129,12 +128,11 @@ touch test.txt
 ls
 ```
 
-![Shared File Verification Amazon](<img width="1594" height="752" alt="image" src="https://github.com/user-attachments/assets/695d3dc9-0060-4ce9-8e11-10c4c7d5ce02" />
-)
-![Shared File Verification Ubutu](<img width="1599" height="765" alt="image" src="https://github.com/user-attachments/assets/50ad9193-6061-42fe-92ec-05ab977a1c65" />
-)
-![Shared File Verification Redhat](<img width="1110" height="626" alt="image" src="https://github.com/user-attachments/assets/a77d8c12-3063-41ac-8291-94622d3f7b07" />
-)
+<img width="1594" height="752" alt="image" src="https://github.com/user-attachments/assets/695d3dc9-0060-4ce9-8e11-10c4c7d5ce02" />
+
+<img width="1599" height="765" alt="image" src="https://github.com/user-attachments/assets/50ad9193-6061-42fe-92ec-05ab977a1c65" />
+
+<img width="1110" height="626" alt="image" src="https://github.com/user-attachments/assets/a77d8c12-3063-41ac-8291-94622d3f7b07" />
 
 ## Conclusion
 
