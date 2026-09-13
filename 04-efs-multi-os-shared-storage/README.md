@@ -102,8 +102,7 @@ I verified that the directory was created using:
 ls
 ```
 
-![Create EFS Directory](<img width="864" height="459" alt="image" src="https://github.com/user-attachments/assets/2cfd2909-fb72-485c-b980-aca0a28691d5" />
-)
+<img width="864" height="459" alt="image" src="https://github.com/user-attachments/assets/2cfd2909-fb72-485c-b980-aca0a28691d5" />
 
 ## 7. Mount Amazon EFS Using the NFS Client
 
