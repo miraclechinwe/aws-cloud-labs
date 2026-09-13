@@ -12,34 +12,13 @@ The EC2 instances used are:
 
 The goal of this lab is to demonstrate how Amazon EFS provides shared file storage that can be accessed simultaneously by multiple Linux EC2 instances.
 
-## Architecture
-
-Amazon EFS acts as the shared file system for all three EC2 instances.
-
-```text
-                    Amazon EFS
-                 Shared File System
-                       |
-              -------------------
-              |        |        |
-              |        |        |
-         Amazon Linux Ubuntu  Red Hat
-              EC2      EC2      EC2
-
-
-## STEPS: 
----
-
 
 ## 1. Create an Amazon EFS File System
 
 I created an Amazon Elastic File System (EFS) to provide shared storage for multiple EC2 instances.
 
-![EFS File System](<img width="1596" height="712" alt="image" src="https://github.com/user-attachments/assets/a0735be6-238b-440a-934f-9cb62af38b87" />
-)
-!(EFS Security group)(<img width="1599" height="713" alt="image" src="https://github.com/user-attachments/assets/a8d421e7-ac0b-4879-86ea-0a1da3a3477e" />
-)
-
+<img width="1596" height="712" alt="image" src="https://github.com/user-attachments/assets/a0735be6-238b-440a-934f-9cb62af38b87" />
+<img width="1599" height="713" alt="image" src="https://github.com/user-attachments/assets/a8d421e7-ac0b-4879-86ea-0a1da3a3477e" />
 
 ## 2. Configure the EFS Security Group
 
