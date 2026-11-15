@@ -6,7 +6,7 @@
 
 > **IAM series:** [Demo 1 – Console access](../05-iam-user-console-access) · **Demo 2 – AWS CLI access** (this lab)
 
-## 📑 Contents
+##  Contents
 
 1. [Objective](#-objective)
 2. [Architecture](#%EF%B8%8F-architecture)
@@ -19,14 +19,14 @@
 9. [Conclusion](#-conclusion)
 
 
-## 🎯 Objective
+##  Objective
 
 In this lab, I used the **AWS Command Line Interface (CLI)** on Windows to check what the IAM user from [Demo 1](../05-iam-user-console-access) (`intellipaat-user`, with **AmazonEC2FullAccess**) can do.
 
 I created an **access key** for the user, configured the CLI, tested an IAM action and EC2 actions, and launched an EC2 instance from the command line.
 
 
-## 🏗️ Architecture
+##  Architecture
 
 ```mermaid
 flowchart LR
@@ -37,7 +37,7 @@ flowchart LR
 ```
 
 
-## 🔑 Console Access vs Programmatic Access
+##  Console Access vs Programmatic Access
 
 | | Console access (Demo 1) | Programmatic access (Demo 2) |
 |---|---|---|
@@ -49,7 +49,7 @@ flowchart LR
 The permissions are the same either way: the policy decides what the user can do, no matter how they connect.
 
 
-## 🔄 Lab Workflow
+##  Lab Workflow
 
 ```mermaid
 flowchart TD
@@ -68,7 +68,7 @@ flowchart TD
 ```
 
 
-## 🧪 Steps
+##  Steps
 
 ### 1. Check Whether the AWS CLI Is Installed
 
@@ -95,7 +95,7 @@ AWS then showed the **Access key ID** and **Secret access key**. The secret key 
 
 <!-- 📸 Screenshot: Create access key – use case (hide the keys!) -->
 
-> ⚠️ **Never** put access keys in screenshots, code or GitHub. Anyone with them can act as this user.
+>  **Never** put access keys in screenshots, code or GitHub. Anyone with them can act as this user.
 
 
 ### 3. Configure the AWS CLI
@@ -209,7 +209,7 @@ sequenceDiagram
 | `aws ec2 run-instances` | `ec2:RunInstances` | ✅ Instance launched |
 
 
-## 🛠️ Common Problems and Fixes
+##  Common Problems and Fixes
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
@@ -220,7 +220,7 @@ sequenceDiagram
 | `InvalidClientTokenId` / `SignatureDoesNotMatch` | Access key or secret typed wrongly | Run `aws configure` again with the correct keys |
 
 
-## 🔒 Security Best Practices
+##  Security Best Practices
 
 - [x] Create access keys for an IAM user, **never** for the root user
 - [x] Test that the user can only do what the policy allows
@@ -231,7 +231,7 @@ sequenceDiagram
 - [ ] Terminate the test EC2 instance to avoid charges
 
 
-## ✅ Conclusion
+##  Conclusion
 
 This lab showed that an IAM user's permissions are the same in the CLI as in the console. With **AmazonEC2FullAccess**, `intellipaat-user` could list and launch EC2 instances from the command line, but `aws iam list-users` was denied. I also learned how to create access keys, configure the CLI, and write multi-line commands on Windows using `^`.
 
