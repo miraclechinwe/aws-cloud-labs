@@ -21,13 +21,14 @@ Hands-on labs documenting my practical experience building, configuring, securin
 | 02 | [Deploy an Nginx Web Server](./02-ec2-nginx-web-server) | EC2 | Linux, Nginx, inbound rules | ✅ Completed |
 | 03 | [AMI & EBS Volume Management](./03-ec2-ami-ebs-management) | EC2, EBS, AMI | Snapshots, volumes, backup & restore | ✅ Completed |
 | 04 | [Shared Storage with EFS Across Operating Systems](./04-efs-multi-os-shared-storage) | EFS, EC2 | NFS mounting, shared storage | ✅ Completed |
-| 05 | [Create an IAM User with Console Access & Permissions](./05-iam-user-console-access) | IAM | Users, console access, password reset, policies, least privilege | ✅ Completed |
+| 05 | [IAM Demo 1: Create an IAM User & Test Console Access](./05-iam-user-console-access) | IAM, EC2 | IAM users, console sign-in, managed policies, least privilege | ✅ Completed |
+| 06 | [IAM Demo 2: Check IAM User Access with the AWS CLI](./06-iam-user-aws-cli-access) | IAM, EC2, AWS CLI | Access keys, `aws configure`, CLI commands, AccessDenied testing | ✅ Completed |
 
 ## 🛠️ Technologies
 - **AWS:** EC2, EBS, EFS, AMI, VPC, Security Groups, IAM
 - **Operating systems:** Amazon Linux, Linux administration
 - **Web server:** Nginx
-- **Tools:** SSH, Git, GitHub
+- **Tools:** AWS CLI, SSH, Git, GitHub
 
 ## 🔒 Security
 No private keys, passwords, AWS access keys or other secrets are stored in this repository. All resources were deleted after each lab to avoid unnecessary costs.

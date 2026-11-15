@@ -1,8 +1,10 @@
-# Lab 05: Creating an IAM User with Console Access and Permissions
+# Lab 05: IAM Demo 1 – Create an IAM User and Test Console Access
 
 ![AWS IAM](https://img.shields.io/badge/AWS_IAM-DD344C?style=for-the-badge&logo=amazonwebservices&logoColor=white)
+![Amazon EC2](https://img.shields.io/badge/Amazon_EC2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white)
 ![Security](https://img.shields.io/badge/Security-Least_Privilege-2E7D32?style=for-the-badge)
-![Level](https://img.shields.io/badge/Level-Beginner-1565C0?style=for-the-badge)
+
+> **IAM series:** **Demo 1 – Console access** (this lab) · [Demo 2 – AWS CLI access](../06-iam-user-aws-cli-access)
 
 ## 📑 Contents
 
@@ -19,22 +21,21 @@
 
 ## 🎯 Objective
 
-In this lab, I created an IAM (Identity and Access Management) user in AWS, gave the user access to the AWS Management Console, required a password reset at first sign-in, and granted permissions by attaching a policy.
+In this lab, I created my first IAM (Identity and Access Management) user, signed in to the AWS Management Console as that user, and tested what the user could do **before and after** attaching a permission policy.
 
-The goal is to show how to give a person their own identity in an AWS account instead of sharing the root user, while following the **principle of least privilege**.
+The goal is to show that a new IAM user has **no permissions by default**, and that access is granted only through policies, following the **principle of least privilege**.
 
 
 ## 🏗️ Architecture
 
 ```mermaid
 flowchart LR
-    Admin["👤 Admin<br/>(account owner)"] -->|creates & manages| IAM["🔐 AWS IAM"]
-    IAM --> User["🧑‍💻 IAM User"]
-    IAM --> Policy["📄 IAM Policy<br/>(JSON permissions)"]
-    Policy -->|attached to| User
-    User -->|signs in with password| Console["🖥️ AWS Management Console"]
-    Console -->|allowed actions| Services["☁️ AWS Services<br/>(S3, EC2, ...)"]
-    Console -.->|actions not in policy| Denied["⛔ Access Denied"]
+    Root["👑 Root user<br/>(admin)"] -->|creates user &<br/>attaches policy| IAM["🔐 AWS IAM"]
+    IAM --> User["🧑‍💻 IAM user<br/>intellipaat-user"]
+    Policy["📄 AmazonEC2FullAccess<br/>(AWS managed policy)"] -->|attached to| User
+    User -->|signs in from<br/>incognito window| Console["🖥️ AWS Management Console"]
+    Console -->|allowed| EC2["🖥️ Amazon EC2<br/>launch instances"]
+    Console -.->|not in policy| Denied["⛔ Access denied<br/>(e.g. IAM, S3)"]
 ```
 
 
@@ -44,168 +45,128 @@ flowchart LR
 |---------|---------------|
 | **Root user** | The email login that created the AWS account. It has full access and should not be used for daily work. |
 | **IAM user** | An identity for one person or application, with its own credentials. |
-| **Console access** | Lets the user sign in to the AWS Management Console with a password. |
-| **IAM group** | A collection of users who share the same permissions. |
-| **IAM policy** | A JSON document that allows or denies specific actions on specific resources. |
-| **Least privilege** | Give users only the permissions they need to do their job, nothing more. |
+| **Console access** | Lets the user sign in to the AWS Management Console with a user name and password. |
+| **IAM policy** | A set of permissions. It is a JSON document that defines which actions are allowed or denied on which AWS resources. Think of it as a permission sheet attached to a user, group or role. |
+| **Least privilege** | Permissions are limited to what a person needs for their job responsibilities. |
 
-### Three ways to give a user permissions
+### Types of IAM policies
+
+```mermaid
+flowchart LR
+    P["📄 IAM Policy"] --> M["Managed policy<br/>(reusable, standalone)"]
+    P --> I["Inline policy<br/>(embedded in one user,<br/>group or role)"]
+    M --> AM["AWS managed<br/>managed by AWS<br/>e.g. AmazonEC2FullAccess"]
+    M --> CM["Customer managed<br/>created and managed by me"]
+```
+
+In the IAM console under **Policies**, the **Type** column shows whether a policy is AWS managed or customer managed.
+
+### Ways to give a user permissions
 
 | Option | How it works | Best for |
 |--------|--------------|----------|
 | **Add user to group** | The user gets all permissions attached to the group | Teams; the recommended way |
-| **Copy permissions** | Copies groups and policies from an existing user | Onboarding someone with the same job as a colleague |
-| **Attach policies directly** | The policy is attached to this one user only | Quick tests and one-off cases (used in this lab) |
+| **Copy permissions** | Copies groups and policies from an existing user | Someone with the same job as a colleague |
+| **Attach policies directly** | The policy is attached to this one user only | Quick tests (used in this lab) |
 
 
 ## 🔄 Lab Workflow
 
 ```mermaid
 flowchart TD
-    A([Start]) --> B["Open IAM → Users → Create user"]
-    B --> C[Enter user name]
-    C --> D[Enable console access]
-    D --> E["Set password +<br/>require new password at next sign-in"]
-    E --> F{Choose permission option}
-    F -->|Add to group| G[Group policies apply]
-    F -->|Copy permissions| H[Same as existing user]
-    F -->|Attach policies directly| I[Attach managed policy]
-    G --> J[Review and create user]
-    H --> J
-    I --> J
-    J --> K["Save sign-in URL & credentials"]
-    K --> L["Sign in as IAM user<br/>and set new password"]
-    L --> M[Test allowed vs denied actions]
-    M --> N["Reset / manage console access"]
-    N --> O["Clean up: delete user"]
-    O --> P([End])
+    A([Start as root user]) --> B["IAM → Users → Create user"]
+    B --> C["Name: intellipaat-user<br/>custom password"]
+    C --> D["Create user with<br/>no permissions yet"]
+    D --> E["Sign in as IAM user<br/>in incognito window"]
+    E --> F{"Try to launch<br/>an EC2 instance"}
+    F -->|No policy yet| G["⛔ Not authorized"]
+    G --> H["As root: attach<br/>AmazonEC2FullAccess"]
+    H --> I{"Try to launch<br/>an EC2 instance again"}
+    I --> J["✅ Instance launches"]
+    J --> K["As root: check the<br/>user's permissions"]
+    K --> L([End])
 ```
 
 
 ## 🧪 Steps
 
-### 1. Open the IAM Console
+### 1. Create the IAM User
 
-I signed in to the AWS Management Console, searched for **IAM**, and opened **Users** from the left menu. I then selected **Create user**.
+Signed in as the root user, I went to **IAM → Users → Create user**.
 
-<!-- 📸 Screenshot: IAM dashboard / Users page -->
+- **User name:** `intellipaat-user`
+- Ticked **Provide user access to the AWS Management Console**
+- Selected **Custom password** and entered a password
+- **Unticked** *Users must create a new password at next sign-in*, so I could sign in straight away with the same password for this demo
 
-
-### 2. Set User Details and Enable Console Access
-
-I entered a user name and ticked **Provide user access to the AWS Management Console**, then selected **I want to create an IAM user**.
-
-For the console password, I chose a password and enabled **Users must create a new password at next sign-in**, so the user sets their own password the first time they log in.
-
-<!-- 📸 Screenshot: User details page with console access options -->
+<!-- 📸 Screenshot: Specify user details page -->
 
 
-### 3. Set Permissions
+### 2. Set Permissions and Create the User
 
-On the **Set permissions** page, I selected **Attach policies directly** and attached the **[policy name]** policy.
+On the **Set permissions** page, I kept **Add user to group** selected but did not choose a group, so the user was created **without any permissions**. I clicked **Next**, then **Create user**.
 
-<!-- 📸 Screenshot: Set permissions page with the selected policy -->
-
-> **Note:** For this lab, a policy was attached directly to the user. In a real environment, it is better to attach policies to **groups** and add users to those groups, so permissions are easier to manage.
-
-**What a policy looks like.** Below is a simple example policy that allows read-only access to S3. Every policy statement is built from the same parts: `Effect`, `Action` and `Resource`.
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "s3:Get*",
-        "s3:List*"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-```
-
-| Part | Meaning in this example |
-|------|-------------------------|
-| `Effect` | `Allow` (or `Deny`) |
-| `Action` | Which API actions: here, any S3 action starting with `Get` or `List` |
-| `Resource` | Which resources: `*` means all of them |
+<!-- 📸 Screenshot: Set permissions page -->
+<!-- 📸 Screenshot: User created successfully (hide the password and account ID) -->
 
 
-### 4. Review and Create the User
+### 3. Sign In as the IAM User
 
-I reviewed the user details and permissions summary, then selected **Create user**.
+I opened an **incognito (private) browser window**, pasted the **IAM user sign-in URL**, and signed in with the user name and password.
 
-On the **Retrieve password** page, AWS showed the **console sign-in URL**, the user name and the password. This information can also be downloaded as a `.csv` file.
-
-<!-- 📸 Screenshot: Review page / user created successfully (hide the password and account ID) -->
-
-
-### 5. Sign In as the New IAM User
-
-I opened the console sign-in URL in a private browser window, signed in with the IAM user name and password, and was asked to set a new password.
+Using incognito let me stay signed in as the root user in my normal window and as the IAM user in the private window at the same time.
 
 ```mermaid
 sequenceDiagram
-    actor U as IAM User
-    participant S as AWS Sign-in Page
-    participant I as AWS IAM
+    actor R as Root user (normal window)
+    actor U as IAM user (incognito window)
+    participant S as AWS Sign-in
     participant C as AWS Console
 
-    U->>S: Open account sign-in URL
-    U->>S: Enter user name + temporary password
-    S->>I: Check credentials
-    I-->>S: Valid, but password reset required
-    S-->>U: Ask for a new password
-    U->>S: Set new password
-    S->>C: Sign-in complete
-    C-->>U: Console opens with the user's permissions
+    R->>R: Copy IAM user sign-in URL,<br/>user name and password
+    U->>S: Open sign-in URL
+    U->>S: Enter user name + password
+    S->>C: Sign-in successful
+    C-->>U: Console opens (no permissions yet)
 ```
 
 <!-- 📸 Screenshot: IAM user sign-in page -->
-<!-- 📸 Screenshot: Change password page -->
+<!-- 📸 Screenshot: Console signed in as intellipaat-user -->
 
 
-### 6. Test the Permissions
+### 4. Test Before Attaching a Policy
 
-I tested what the user could and could not do. Actions included in the policy worked, while actions outside the policy showed an **access denied** message.
+As the IAM user, I tried to use EC2. Because no policy was attached, the console showed **not authorized / access denied** messages.
 
-| Test | Expected result |
-|------|-----------------|
-| Action allowed by the attached policy | ✅ Works |
-| Action not in the policy | ⛔ Access denied |
-| Open IAM to create another user | ⛔ Access denied (no IAM permissions) |
-
-<!-- 📸 Screenshot: Allowed action -->
-<!-- 📸 Screenshot: Access denied message -->
+<!-- 📸 Screenshot: Access denied before the policy -->
 
 
-### 7. Reset / Manage Console Access
+### 5. Attach the AmazonEC2FullAccess Policy
 
-Back as the admin, I opened the user, went to the **Security credentials** tab, and selected **Manage console access**.
+Back in the root user window, I went to **IAM → Users → intellipaat-user → Permissions → Add permissions → Attach policies directly**, searched for **AmazonEC2FullAccess**, ticked the checkbox, clicked **Next**, then **Add permissions**.
 
-From here, an administrator can:
-
-- **Reset the password** (auto-generated or custom)
-- Require a new password at next sign-in
-- **Disable** console access completely
-
-<!-- 📸 Screenshot: Security credentials tab → Manage console access -->
+<!-- 📸 Screenshot: Searching for AmazonEC2FullAccess -->
+<!-- 📸 Screenshot: Policy attached to the user -->
 
 
-### 8. Verify and Change Permissions
+### 6. Test After Attaching the Policy
 
-I opened the **Permissions** tab of the user to confirm the policy was attached. Permissions can be added with **Add permissions** or removed with **Remove**.
+In the IAM user's incognito window, I clicked **Launch instance** to check whether the user could now launch an EC2 instance.
 
-<!-- 📸 Screenshot: Permissions tab showing the attached policy -->
+| Test as `intellipaat-user` | Before policy | After AmazonEC2FullAccess |
+|----------------------------|:-------------:|:-------------------------:|
+| Launch an EC2 instance | ⛔ Denied | ✅ Allowed |
+| View EC2 instances | ⛔ Denied | ✅ Allowed |
+| Create IAM users | ⛔ Denied | ⛔ Denied (not in policy) |
+
+<!-- 📸 Screenshot: Instance launched as the IAM user -->
 
 
-### 9. Clean Up
+### 7. Check the User's Permissions as Root
 
-After the lab, I deleted the IAM user to keep the account secure.
+Finally, in the root user window, I opened the user's **Permissions** tab and clicked on the attached policy to see exactly which permissions the user has. Clicking **{} JSON** shows the policy document.
 
-<!-- 📸 Screenshot: User deleted -->
+<!-- 📸 Screenshot: Permissions tab / policy JSON -->
 
 
 ## ⚖️ How AWS Decides: Allow or Deny
@@ -221,30 +182,53 @@ flowchart TD
     A -->|No| ID["⛔ Denied<br/>(implicit deny)"]
 ```
 
-This is why the new user could only do what the attached policy allowed: everything else fell through to the **implicit deny**.
+This explains both test results: **before** the policy, nothing was allowed, so EC2 fell through to the implicit deny. **After** attaching AmazonEC2FullAccess, EC2 actions had an explicit Allow, but IAM actions still did not.
+
+**What a policy looks like.** A simplified version of the EC2 full-access idea:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "ec2:*",
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+| Part | Meaning |
+|------|---------|
+| `Effect` | `Allow` or `Deny` |
+| `Action` | Which API actions; `ec2:*` means every EC2 action |
+| `Resource` | Which resources; `*` means all of them |
 
 
 ## 🛠️ Common Problems and Fixes
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
-| User can't sign in | Using the root sign-in page instead of the IAM sign-in URL | Use the account-specific sign-in URL, or choose **IAM user** and enter the account ID |
-| "Access denied" on an action | The policy does not allow that action | Attach a policy that includes the action, following least privilege |
-| Forgot the temporary password | The `.csv` file was not saved | Admin resets it via **Security credentials → Manage console access** |
-| Password not accepted | Doesn't meet the account's password policy | Use a longer password with mixed characters |
+| IAM user can't sign in | Using the root sign-in page instead of the IAM user sign-in URL | Use the account-specific sign-in URL, or choose **IAM user** and enter the account ID |
+| Signing in as the IAM user logs out the root user | Both sessions in the same browser window | Use an incognito/private window for the IAM user |
+| "Not authorized" when launching an instance | No policy attached yet | Attach a policy that allows the action (here AmazonEC2FullAccess) |
+| Changes don't show in the IAM user's window | Page not refreshed after attaching the policy | Refresh the console page |
 
 
 ## 🔒 Security Best Practices
 
-- [x] Use IAM users (or IAM Identity Center) instead of the root user for daily work
-- [x] Require a new password at first sign-in
-- [x] Give only the permissions needed (least privilege)
+- [x] Use an IAM user instead of the root user for daily work
+- [x] Start with no permissions and add only what is needed
+- [ ] Use a narrower policy than full access in real environments (e.g. read-only)
+- [ ] Require a new password at first sign-in for real users
 - [ ] Enable **MFA** for every user with console access
 - [ ] Manage permissions with **groups** instead of attaching policies directly
-- [ ] Never share or commit passwords, `.csv` credential files or access keys
-- [ ] Remove users and permissions that are no longer needed
+- [ ] Terminate test instances and delete unused users after the lab
 
 
 ## ✅ Conclusion
 
-This lab demonstrated how to create an IAM user, enable and reset console access, and control what the user can do with policies. I also learned how AWS evaluates permissions: everything is denied by default, an Allow grants access, and an explicit Deny always wins. Using individual IAM users with least-privilege permissions is much safer than sharing the root account.
+This lab showed that a new IAM user can sign in but can do nothing until a policy grants permissions. After attaching **AmazonEC2FullAccess**, the user could launch EC2 instances but still could not manage IAM, which demonstrates least privilege and how AWS evaluates permissions.
+
+➡️ **Next:** [IAM Demo 2 – Check an IAM user's access with the AWS CLI](../06-iam-user-aws-cli-access)
