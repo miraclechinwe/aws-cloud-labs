@@ -1,4 +1,4 @@
-# Lab 02: Deploy a Nginx Web Server on AWS EC2
+# Lab 02: Deploy an Nginx Web Server on AWS EC2
 
 ## Objective
 Launch an Ubuntu EC2 instance and configure Nginx to host a custom web page.

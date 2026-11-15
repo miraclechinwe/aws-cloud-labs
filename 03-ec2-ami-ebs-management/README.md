@@ -4,7 +4,7 @@
 In this lab, I worked with EC2, AMIs, and EBS to learn how to replicate an EC2 instance across AWS regions and manage its storage.
 
 ## 1. Launch a Linux EC2 Instance
-I launched a Linux EC2 instance in the N. Virginia (`us-east-1`) region and connected it to install some web servers.
+I launched a Linux EC2 instance in the N. Virginia (`us-east-1`) region and connected to it to install a web server.
 
 <img width="1599" height="761" alt="image" src="https://github.com/user-attachments/assets/ec7d6a22-0d36-45bf-b45e-c9d93475f611" />
 <img width="1381" height="770" alt="image" src="https://github.com/user-attachments/assets/fba76f86-f0a3-4f73-a646-f54da631d06c" />
@@ -25,14 +25,13 @@ I copied the AMI from N. Virginia to Oregon (`us-west-2`) and launched another E
 
 
 ## 4. Create and Attach EBS Volumes
-I created two EBS volumes and attached them to the N. Virginia region
+I created two EBS volumes and attached them to the EC2 instance in the N. Virginia region.
 
 <img width="1599" height="768" alt="image" src="https://github.com/user-attachments/assets/68c24dc8-41b2-428d-a40c-ae64ed45e020" />
 
 
-## 5. Detach and Delete a Volume and Increase the size of the other volume
-I detached one of the EBS volumes and deleted it and I increased the size of the remaining EBS volume.
-.
+## 5. Detach, Delete and Resize Volumes
+I detached one of the EBS volumes and deleted it, then increased the size of the remaining EBS volume.
 
 <img width="1599" height="816" alt="image" src="https://github.com/user-attachments/assets/ea69af58-e037-44df-889c-17bd6013d418" />
 
