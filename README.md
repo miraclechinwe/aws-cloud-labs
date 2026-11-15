@@ -21,6 +21,7 @@ Hands-on labs documenting my practical experience building, configuring, securin
 | 02 | [Deploy an Nginx Web Server](./02-ec2-nginx-web-server) | EC2 | Linux, Nginx, inbound rules | ✅ Completed |
 | 03 | [AMI & EBS Volume Management](./03-ec2-ami-ebs-management) | EC2, EBS, AMI | Snapshots, volumes, backup & restore | ✅ Completed |
 | 04 | [Shared Storage with EFS Across Operating Systems](./04-efs-multi-os-shared-storage) | EFS, EC2 | NFS mounting, shared storage | ✅ Completed |
+| 05 | [Create an IAM User with Console Access & Permissions](./05-iam-user-console-access) | IAM | Users, console access, password reset, policies, least privilege | ✅ Completed |
 
 ## 🛠️ Technologies
 - **AWS:** EC2, EBS, EFS, AMI, VPC, Security Groups, IAM
