@@ -27,7 +27,6 @@ I created an **access key** for the user, configured the CLI, tested an IAM acti
 
 
 ##  Architecture
-
 ```mermaid
 flowchart LR
     PC["💻 My Windows PC<br/>Command Prompt"] -->|aws configure<br/>access key + secret key| CLI["⌨️ AWS CLI"]
@@ -35,8 +34,6 @@ flowchart LR
     IAMChk -->|ec2:* allowed| EC2["🖥️ Amazon EC2<br/>ap-south-1 (Mumbai)"]
     IAMChk -.->|iam:ListUsers not allowed| Denied["⛔ AccessDenied"]
 ```
-
-
 ##  Console Access vs Programmatic Access
 
 | | Console access (Demo 1) | Programmatic access (Demo 2) |
@@ -78,14 +75,13 @@ I opened **Command Prompt** and ran:
 aws --version
 ```
 
-The CLI was not installed yet, so I searched for **Install AWS CLI** on Google, downloaded the Windows installer from the official AWS documentation, installed it, and ran the command again to confirm.
+The CLI was already installed.
 
-<!-- 📸 Screenshot: aws --version output -->
-
+<img width="1112" height="619" alt="image" src="https://github.com/user-attachments/assets/7e921732-e567-4827-aff6-e03355f132cb" />
 
 ### 2. Create an Access Key for the IAM User
 
-As the root user, I went to **IAM → Users → intellipaat-user → Security credentials → Access keys → Create access key**.
+As the root user, I went to **IAM → Users → xxxx-user → Security credentials → Access keys → Create access key**.
 
 - Use case: **Local code**
 - Ticked **I understand the above recommendation and want to proceed to create an access key**
@@ -93,10 +89,7 @@ As the root user, I went to **IAM → Users → intellipaat-user → Security cr
 
 AWS then showed the **Access key ID** and **Secret access key**. The secret key is shown **only once**, so it must be saved securely (or downloaded as `.csv`).
 
-<!-- 📸 Screenshot: Create access key – use case (hide the keys!) -->
-
->  **Never** put access keys in screenshots, code or GitHub. Anyone with them can act as this user.
-
+<img width="1598" height="707" alt="image" src="https://github.com/user-attachments/assets/35ab060a-c44c-4e06-9d4d-98822d38b399" />
 
 ### 3. Configure the AWS CLI
 
@@ -112,8 +105,7 @@ AWS Secret Access Key [None]: <your-secret-access-key>
 Default region name [None]: ap-south-1
 Default output format [None]: json
 ```
-
-<!-- 📸 Screenshot: aws configure (keys hidden) -->
+<img width="833" height="345" alt="image" src="https://github.com/user-attachments/assets/18165620-d6f0-422a-be21-371361028666" />
 
 
 ### 4. Test an IAM Action
@@ -131,9 +123,7 @@ An error occurred (AccessDenied) when calling the ListUsers operation:
 User: arn:aws:iam::<account-id>:user/intellipaat-user is not authorized
 to perform: iam:ListUsers ...
 ```
-
-<!-- 📸 Screenshot: aws iam list-users AccessDenied -->
-
+<img width="1114" height="628" alt="image" src="https://github.com/user-attachments/assets/13a148a1-db1f-4654-8dc1-25666296d580" />
 
 ### 5. Test an EC2 Action
 
@@ -142,82 +132,8 @@ EC2 actions should work:
 ```cmd
 aws ec2 describe-instances
 ```
-
 Result: the command returned the EC2 instances in `ap-south-1` as JSON.
-
-<!-- 📸 Screenshot: aws ec2 describe-instances output -->
-
-
-### 6. Launch an EC2 Instance with the CLI
-
-I checked the **AWS CLI Command Reference** online (Amazon Q can also help build commands) for `run-instances`.
-
-On **Windows Command Prompt**, a long command is split over several lines with `^`, not the `\` used on Linux/macOS:
-
-```cmd
-aws ec2 run-instances ^
-    --image-id <ami-id> ^
-    --instance-type t2.micro ^
-    --key-name <key-pair-name> ^
-    --count 1
-```
-
-| Shell | Line continuation character |
-|-------|:---------------------------:|
-| Windows Command Prompt | `^` |
-| Windows PowerShell | `` ` `` (backtick) |
-| Linux / macOS | `\` |
-
-<!-- 📸 Screenshot: run-instances command and output -->
-
-
-### 7. Confirm as the Root User
-
-I signed in as the root user, opened **EC2 → Instances** in the **Mumbai (ap-south-1)** region, and confirmed the instance launched from the CLI was running.
-
-<!-- 📸 Screenshot: Instance visible in the EC2 console -->
-
-
-## 📊 Results
-
-```mermaid
-sequenceDiagram
-    actor Me as Me (CMD)
-    participant CLI as AWS CLI
-    participant IAM as AWS IAM
-    participant EC2 as Amazon EC2
-
-    Me->>CLI: aws iam list-users
-    CLI->>IAM: Is iam:ListUsers allowed?
-    IAM-->>Me: ⛔ AccessDenied
-
-    Me->>CLI: aws ec2 describe-instances
-    CLI->>IAM: Is ec2:DescribeInstances allowed?
-    IAM-->>CLI: ✅ Allowed (AmazonEC2FullAccess)
-    CLI->>EC2: Describe instances
-    EC2-->>Me: Instance list (JSON)
-
-    Me->>CLI: aws ec2 run-instances ...
-    CLI->>EC2: Launch instance (allowed)
-    EC2-->>Me: New instance ID
-```
-
-| Command | Permission needed | Result |
-|---------|-------------------|:------:|
-| `aws iam list-users` | `iam:ListUsers` | ⛔ AccessDenied |
-| `aws ec2 describe-instances` | `ec2:DescribeInstances` | ✅ Success |
-| `aws ec2 run-instances` | `ec2:RunInstances` | ✅ Instance launched |
-
-
-##  Common Problems and Fixes
-
-| Problem | Cause | Fix |
-|---------|-------|-----|
-| `'aws' is not recognized as an internal or external command` | AWS CLI not installed, or CMD opened before install | Install the CLI, then open a **new** Command Prompt |
-| `aws ec2 list-users` fails | There is no such EC2 command; users belong to IAM | Use `aws iam list-users` for users, `aws ec2 describe-instances` for instances |
-| Multi-line command fails on Windows | Used `\` for line breaks | Use `^` in CMD (or put the command on one line) |
-| No instances shown / instance "missing" | Console or CLI pointing to a different region | Check the region (`ap-south-1`) in both |
-| `InvalidClientTokenId` / `SignatureDoesNotMatch` | Access key or secret typed wrongly | Run `aws configure` again with the correct keys |
+<img width="1113" height="622" alt="image" src="https://github.com/user-attachments/assets/73352d0c-a972-408c-9901-32b557b497ea" />
 
 
 ##  Security Best Practices
@@ -228,7 +144,6 @@ sequenceDiagram
 - [ ] **Deactivate and delete** the access key after the lab
 - [ ] Rotate access keys regularly in real environments
 - [ ] Prefer short-term credentials (IAM roles, IAM Identity Center) over long-term access keys
-- [ ] Terminate the test EC2 instance to avoid charges
 
 
 ##  Conclusion
