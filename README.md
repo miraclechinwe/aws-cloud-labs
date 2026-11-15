@@ -17,7 +17,7 @@ Hands-on labs documenting my practical experience building, configuring, securin
 
 | # | Lab | AWS Services | Key Skills | Status |
 |---|-----|--------------|------------|--------|
-| 01 | [Launch & Connect to a Linux EC2 Instance](./01-ec2-linux-ssh-instance-connect) | EC2, Security Groups | SSH, key pairs, EC2 Instance Connect | ✅ Completed |
+| 01 | [Launch & Connect to a Linux EC2 Instance](./01-ec2-linux-ssh-instanceconnect) | EC2, Security Groups | SSH, key pairs, EC2 Instance Connect | ✅ Completed |
 | 02 | [Deploy an Nginx Web Server](./02-ec2-nginx-web-server) | EC2 | Linux, Nginx, inbound rules | ✅ Completed |
 | 03 | [AMI & EBS Volume Management](./03-ec2-ami-ebs-management) | EC2, EBS, AMI | Snapshots, volumes, backup & restore | ✅ Completed |
 | 04 | [Shared Storage with EFS Across Operating Systems](./04-efs-multi-os-shared-storage) | EFS, EC2 | NFS mounting, shared storage | ✅ Completed |
@@ -33,4 +33,4 @@ No private keys, passwords, AWS access keys or other secrets are stored in this 
 
 ## 📫 Contact
 - LinkedIn: [your LinkedIn link]
-- Certifications: [e.g. AWS Certified Cloud Practitioner ]
+- Certifications: [e.g. AWS Certified Cloud Practitioner]
