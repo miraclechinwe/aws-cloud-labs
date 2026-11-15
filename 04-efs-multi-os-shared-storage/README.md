@@ -1,4 +1,4 @@
-# Amazon EFS Shared Storage Across Multiple EC2 Instances
+# Lab 04: Amazon EFS Shared Storage Across Multiple EC2 Instances
 
 ## Objective
 
@@ -38,7 +38,7 @@ I launched three EC2 instances using different Linux operating systems:
 
 <img width="1596" height="760" alt="image" src="https://github.com/user-attachments/assets/2b07e25f-8a18-464b-ac33-cf2d784deaa0" />
 
-## 4. Configure Three EC2 Instances security groups
+## 4. Configure the EC2 Instance Security Groups
 
 During the lab, I configured the security groups for the instances to enable the required network communication with Amazon EFS.
 
@@ -104,7 +104,7 @@ ls
 
 <img width="864" height="459" alt="image" src="https://github.com/user-attachments/assets/2cfd2909-fb72-485c-b980-aca0a28691d5" />
 
-## 7. Mount Amazon EFS Using the NFS Client
+## 8. Mount Amazon EFS Using the NFS Client
 
 I opened the Amazon EFS file system and selected **Attach** to view the available mounting options.
 
@@ -118,7 +118,7 @@ Example:
 
 <img width="1476" height="520" alt="image" src="https://github.com/user-attachments/assets/6239dba7-9599-404b-8b20-d73fd66d9edb" />
 
-## 8. Verify Shared Storage
+## 9. Verify Shared Storage
 
 I created a test file in the EFS directory on one EC2 instance and used `ls` on all three instances to verify that the same file was accessible from Amazon Linux, Ubuntu, and Red Hat.
 
