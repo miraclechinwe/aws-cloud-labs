@@ -4,19 +4,19 @@
 ![Amazon EC2](https://img.shields.io/badge/Amazon_EC2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white)
 ![Security](https://img.shields.io/badge/Security-Least_Privilege-2E7D32?style=for-the-badge)
 
-> **IAM series:** ** Demo 1 Console access** (this lab) · [Demo 2 – AWS CLI access](../06-iam-user-aws-cli-access)
+> **IAM series:** **Demo 1 – Console access** (this lab) · [Demo 2 – AWS CLI access](../06-iam-user-aws-cli-access)
 
 ##  Contents
 
-1. [Objective](#-objective)
-2. [Architecture](#%EF%B8%8F-architecture)
-3. [Key Concepts](#-key-concepts)
-4. [Lab Workflow](#-lab-workflow)
-5. [Steps](#-steps)
-6. [How AWS Decides: Allow or Deny](#%EF%B8%8F-how-aws-decides-allow-or-deny)
-7. [Common Problems and Fixes](#%EF%B8%8F-common-problems-and-fixes)
-8. [Security Best Practices](#-security-best-practices)
-9. [Conclusion](#-conclusion)
+1. [Objective](#objective)
+2. [Architecture](#architecture)
+3. [Key Concepts](#key-concepts)
+4. [Lab Workflow](#lab-workflow)
+5. [Steps](#steps)
+6. [How AWS Decides: Allow or Deny](#how-aws-decides-allow-or-deny)
+7. [Common Problems and Fixes](#common-problems-and-fixes)
+8. [Security Best Practices](#security-best-practices)
+9. [Conclusion](#conclusion)
 
 
 ##  Objective
@@ -31,7 +31,7 @@ The goal is to show that a new IAM user has **no permissions by default**, and t
 ```mermaid
 flowchart LR
     Root["👑 Root user<br/>(admin)"] -->|creates user &<br/>attaches policy| IAM["🔐 AWS IAM"]
-    IAM --> User["🧑‍💻 IAM user<br/>intellipaat-user"]
+    IAM --> User["🧑‍💻 IAM user<br/>iam-user"]
     Policy["📄 AmazonEC2FullAccess<br/>(AWS managed policy)"] -->|attached to| User
     User -->|signs in from<br/>incognito window| Console["🖥️ AWS Management Console"]
     Console -->|allowed| EC2["🖥️ Amazon EC2<br/>launch instances"]
@@ -75,7 +75,7 @@ In the IAM console under **Policies**, the **Type** column shows whether a polic
 ```mermaid
 flowchart TD
     A([Start as root user]) --> B["IAM → Users → Create user"]
-    B --> C["Name: intellipaat-user<br/>custom password"]
+    B --> C["Name: iam-user<br/>custom password"]
     C --> D["Create user with<br/>no permissions yet"]
     D --> E["Sign in as IAM user<br/>in incognito window"]
     E --> F{"Try to launch<br/>an EC2 instance"}
@@ -94,7 +94,7 @@ flowchart TD
 
 Signed in as the root user, I went to **IAM → Users → Create user**.
 
-- **User name:** 
+- **User name:** `iam-user` (name changed for privacy)
 - Ticked **Provide user access to the AWS Management Console**
 - Selected **Custom password** and entered a password
 - **Unticked** *Users must create a new password at next sign-in*, so I could sign in straight away with the same password for this demo
@@ -137,14 +137,14 @@ sequenceDiagram
 
 ### 4. Test Before Attaching a Policy
 
-As the IAM user, I tried to use EC2. Because no policy was attached, the console showed **not authorized / access denied** messages. A user can login but cannot do anything without a permission, which is called IAM policy: its a permission sheet attached to a user, group or role. 
+As the IAM user, I tried to use EC2. Because no policy was attached, the console showed **not authorized / access denied** messages. This shows that a user can sign in but cannot do anything without permissions. Permissions are given through an **IAM policy**, a permission sheet attached to a user, group or role.
 
 <img width="1516" height="723" alt="image" src="https://github.com/user-attachments/assets/f79e3294-6a65-456a-a7b2-b9d67e4afdcd" />
 
 
 ### 5. Attach the AmazonEC2FullAccess Policy
 
-Back in the root user window, I went to **IAM → Users → xxxxx → Permissions → Add permissions → Attach policies directly**, searched for **AmazonEC2FullAccess**, ticked the checkbox, clicked **Next**, then **Add permissions**.
+Back in the root user window, I went to **IAM → Users → iam-user → Permissions → Add permissions → Attach policies directly**, searched for **AmazonEC2FullAccess**, ticked the checkbox, clicked **Next**, then **Add permissions**.
 
 <img width="1588" height="711" alt="image" src="https://github.com/user-attachments/assets/9f759130-6b9c-481c-9659-ea7496ce3b4d" />
 
@@ -154,9 +154,9 @@ Back in the root user window, I went to **IAM → Users → xxxxx → Permission
 
 ### 6. Test After Attaching the Policy
 
-In the IAM user's incognito window, I clicked **Launch instance** to check whether the user could now launch an EC2 instance, and apart from EC2 Access, this user cannot access any other thing. 
+In the IAM user's incognito window, I clicked **Launch instance** to check whether the user could now launch an EC2 instance. Apart from EC2, the user still could not access any other service.
 
-| Test as `intellipaat-user` | Before policy | After AmazonEC2FullAccess |
+| Test as `iam-user` | Before policy | After AmazonEC2FullAccess |
 |----------------------------|:-------------:|:-------------------------:|
 | Launch an EC2 instance | ⛔ Denied | ✅ Allowed |
 | View EC2 instances | ⛔ Denied | ✅ Allowed |
@@ -229,7 +229,7 @@ This explains both test results: **before** the policy, nothing was allowed, so 
 - [ ] Terminate test instances and delete unused users after the lab
 
 
-## ✅ Conclusion
+##  Conclusion
 
 This lab showed that a new IAM user can sign in but can do nothing until a policy grants permissions. After attaching **AmazonEC2FullAccess**, the user could launch EC2 instances but still could not manage IAM, which demonstrates least privilege and how AWS evaluates permissions.
 

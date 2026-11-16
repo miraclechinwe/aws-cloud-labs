@@ -8,29 +8,29 @@
 
 ##  Contents
 
-1. [Objective](#-objective)
-2. [Architecture](#%EF%B8%8F-architecture)
-3. [Console Access vs Programmatic Access](#-console-access-vs-programmatic-access)
-4. [Lab Workflow](#-lab-workflow)
-5. [Steps](#-steps)
-6. [Results](#-results)
-7. [Common Problems and Fixes](#%EF%B8%8F-common-problems-and-fixes)
-8. [Security Best Practices](#-security-best-practices)
-9. [Conclusion](#-conclusion)
+1. [Objective](#objective)
+2. [Architecture](#architecture)
+3. [Console Access vs Programmatic Access](#console-access-vs-programmatic-access)
+4. [Lab Workflow](#lab-workflow)
+5. [Steps](#steps)
+6. [Results](#results)
+7. [Problems I Ran Into](#problems-i-ran-into)
+8. [Security Best Practices](#security-best-practices)
+9. [Conclusion](#conclusion)
 
 
 ##  Objective
 
-In this lab, I used the **AWS Command Line Interface (CLI)** on Windows to check what the IAM user from [Demo 1](../05-iam-user-console-access) (`intellipaat-user`, with **AmazonEC2FullAccess**) can do.
+In this lab, I used the **AWS Command Line Interface (CLI)** on Windows to check what the IAM user from [Demo 1](../05-iam-user-console-access) (`iam-user`, with **AmazonEC2FullAccess**) can do.
 
-I created an **access key** for the user, configured the CLI, tested an IAM action and EC2 actions, and launched an EC2 instance from the command line.
+I created an **access key** for the user, configured the CLI, and tested an IAM action and an EC2 action to see which were allowed.
 
 
 ##  Architecture
 ```mermaid
 flowchart LR
     PC["💻 My Windows PC<br/>Command Prompt"] -->|aws configure<br/>access key + secret key| CLI["⌨️ AWS CLI"]
-    CLI -->|signed API requests| IAMChk["🔐 AWS IAM<br/>checks intellipaat-user's policies"]
+    CLI -->|signed API requests| IAMChk["🔐 AWS IAM<br/>checks iam-user's policies"]
     IAMChk -->|ec2:* allowed| EC2["🖥️ Amazon EC2<br/>ap-south-1 (Mumbai)"]
     IAMChk -.->|iam:ListUsers not allowed| Denied["⛔ AccessDenied"]
 ```
@@ -51,17 +51,14 @@ The permissions are the same either way: the policy decides what the user can do
 ```mermaid
 flowchart TD
     A([Start]) --> B["aws --version<br/>(is the CLI installed?)"]
-    B --> C["Install AWS CLI for Windows"]
-    C --> D["As root: create access key<br/>for intellipaat-user"]
+    B --> D["As root: create access key<br/>for iam-user"]
     D --> E["aws configure<br/>key, secret, region, output"]
     E --> F["aws iam list-users"]
     F --> G["⛔ AccessDenied"]
     E --> H["aws ec2 describe-instances"]
     H --> I["✅ Works"]
-    I --> J["aws ec2 run-instances"]
-    J --> K["✅ Instance launched"]
-    K --> L["As root: confirm the<br/>instance in the console"]
-    L --> M([End])
+    G --> M([End])
+    I --> M
 ```
 
 
@@ -81,7 +78,7 @@ The CLI was already installed.
 
 ### 2. Create an Access Key for the IAM User
 
-As the root user, I went to **IAM → Users → xxxx-user → Security credentials → Access keys → Create access key**.
+As the root user, I went to **IAM → Users → iam-user → Security credentials → Access keys → Create access key**.
 
 - Use case: **Local code**
 - Ticked **I understand the above recommendation and want to proceed to create an access key**
@@ -120,7 +117,7 @@ Result: an **AccessDenied** error, similar to:
 
 ```text
 An error occurred (AccessDenied) when calling the ListUsers operation:
-User: arn:aws:iam::<account-id>:user/intellipaat-user is not authorized
+User: arn:aws:iam::xxxxxxxxxxxx:user/iam-user is not authorized
 to perform: iam:ListUsers ...
 ```
 <img width="1114" height="628" alt="image" src="https://github.com/user-attachments/assets/13a148a1-db1f-4654-8dc1-25666296d580" />
@@ -133,7 +130,29 @@ EC2 actions should work:
 aws ec2 describe-instances
 ```
 Result: the command returned the EC2 instances in `ap-south-1` as JSON.
+
 <img width="1113" height="622" alt="image" src="https://github.com/user-attachments/assets/73352d0c-a972-408c-9901-32b557b497ea" />
+
+
+##  Results
+
+| Command | Permission needed | Result |
+|---------|-------------------|:------:|
+| `aws iam list-users` | `iam:ListUsers` | ⛔ AccessDenied |
+| `aws ec2 describe-instances` | `ec2:DescribeInstances` | ✅ Success |
+
+The user is **authenticated** in both cases (AWS knows who it is), but only the EC2 action is **authorized** by the attached policy.
+
+
+##  Problems I Ran Into
+
+| Problem | Cause | Fix |
+|---------|-------|-----|
+| `aws iam list-users` → **AccessDenied** | Not a bug: the user only has AmazonEC2FullAccess, so no policy allows `iam:ListUsers` (implicit deny) | Expected result. Attaching **IAMReadOnlyAccess** would allow listing users |
+| `aws ec2 list-users` → **Invalid choice 'list-users'** | There is no such EC2 command; users belong to IAM | Use `aws iam list-users` for users and `aws ec2 describe-instances` for instances. `aws ec2 help` lists valid commands |
+| `run-instances` with `<ami-id>` → **The system cannot find the file specified** | In Windows CMD, `<` and `>` mean file redirection, so CMD looked for a file called `ami-id` | Replace placeholders with real values and remove the `< >` |
+| `run-instances` → **InvalidAMIID.NotFound** | Used an example AMI ID that does not exist | Look up a real AMI ID for the region, e.g. `aws ec2 describe-images --owners amazon ...` or from the EC2 launch page |
+| Multi-line command fails on Windows | Used `\` for line breaks (Linux style) | Use `^` in CMD (or `` ` `` in PowerShell) |
 
 
 ##  Security Best Practices
@@ -148,6 +167,6 @@ Result: the command returned the EC2 instances in `ap-south-1` as JSON.
 
 ##  Conclusion
 
-This lab showed that an IAM user's permissions are the same in the CLI as in the console. With **AmazonEC2FullAccess**, `intellipaat-user` could list and launch EC2 instances from the command line, but `aws iam list-users` was denied. I also learned how to create access keys, configure the CLI, and write multi-line commands on Windows using `^`.
+This lab showed that an IAM user's permissions are the same in the CLI as in the console. With **AmazonEC2FullAccess**, the user could describe EC2 instances from the command line, but `aws iam list-users` was denied. I also learned how to create access keys, configure the CLI, and read CLI errors: **AccessDenied** means the command exists but the user isn't allowed, while **Invalid choice** means the command doesn't exist.
 
 ⬅️ **Previous:** [IAM Demo 1 – Create an IAM user and test console access](../05-iam-user-console-access)
